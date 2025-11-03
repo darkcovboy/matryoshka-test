@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 namespace CookingPrototype.Kitchen {
 	[RequireComponent(typeof(FoodPlace))]
 	public sealed class FoodTrasher : MonoBehaviour {
+		private const float DoubleTapThresshold = 0.4f;
 
 		FoodPlace _place = null;
 		float     _timer = 0f;
@@ -21,7 +22,20 @@ namespace CookingPrototype.Kitchen {
 		/// </summary>
 		[UsedImplicitly]
 		public void TryTrashFood() {
-			throw new NotImplementedException("TryTrashFood: this feature is not implemented");
+			if(_place.IsFree)
+				return;
+			
+			if(_place.CurFood.CurStatus != Food.FoodStatus.Overcooked)
+				return;
+			
+			float currentTime = Time.realtimeSinceStartup;
+			float delta = currentTime - _timer;
+			
+			if (delta < DoubleTapThresshold) {
+				_place.FreePlace();
+			}
+			
+			_timer = currentTime;
 		}
 	}
 }
